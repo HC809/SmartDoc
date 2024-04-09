@@ -1,0 +1,85 @@
+﻿@page "/upload"
+@rendermode InteractiveServer
+
+<PageTitle>Upload File & Analyze</PageTitle>
+
+<h2 class="mb-2">Cargar y Analizar Archivo</h2>
+
+@if (isLoading)
+{
+    <p>Cargando...</p>
+}
+else
+{
+    <InputFile OnChange="LoadFile" class="form-control mb-2" disabled="@isLoading" @key="@(inputFileKey)">Cargar</InputFile>
+
+
+    @if (selectedFile != null)
+    {
+        <button class="btn btn-primary mr-2" disabled="@isLoading"><i class="bi bi-file-earmark-break"></i> Analizar</button>
+        <button class="btn btn-secondary" @onclick="ClearFile"><i class="bi bi-x-lg"></i> Cancelar</button>
+    }
+
+    @if (errors.Count > 0)
+    {
+        <div class="error-messages">
+            <h3>@(errors.Count > 1 ? "Errores" : "Error")</h3>
+            <ul>
+                @foreach (var error in errors)
+                {
+                    <li>@error</li>
+                }
+            </ul>
+        </div>
+    }
+}
+
+@code {
+    private Guid inputFileKey = Guid.NewGuid();
+    private long maxFileSize = 1024 * 1024 * 3; //3MB
+    private string[] allowedFileTypes = ["application/pdf", "image/jpg", "image/png"];
+    private bool isLoading = false;
+    private List<string> errors = new();
+    private IBrowserFile? selectedFile;
+
+    private void LoadFile(InputFileChangeEventArgs e)
+    {
+        isLoading = true;
+        selectedFile = null;
+        errors.Clear();
+
+        if (e.FileCount > 1)
+        {
+            errors.Add($"Estas intentando agregar {e.FileCount} archivos. Solo puedes agregar un archivo a la vez.");
+            return;
+        }
+
+        var file = e.File;
+        var fileSize = file.Size;
+        var fileType = file.ContentType;
+
+        if (fileSize > maxFileSize)
+        {
+            errors.Add($"El tamaño del archivo es de {fileSize} excede el límite de {maxFileSize}.");
+            isLoading = false;
+            return;
+        }
+
+        if (!allowedFileTypes.Contains(fileType))
+        {
+            errors.Add($"Estas intentando cargar un archivo de tipo {fileType} y solo se permiten archivos PDF, PNG o JPG.");
+            isLoading = false;
+            return;
+        }
+
+        selectedFile = file;
+        isLoading = false;
+    }
+
+    private void ClearFile()
+    {
+        selectedFile = null;
+        errors.Clear();
+        inputFileKey = Guid.NewGuid();
+    }
+}
