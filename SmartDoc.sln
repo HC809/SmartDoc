@@ -5,6 +5,8 @@ VisualStudioVersion = 17.8.34525.116
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartDoc.WebApp", "SmartDoc.WebApp\SmartDoc.WebApp.csproj", "{9EDE99D5-D5E6-403D-BD7C-25D633C5AAA3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartDoc.Api", "SmartDoc.Api\SmartDoc.Api.csproj", "{3182F2AA-0F42-4F3F-943A-602A0FAB92A3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{9EDE99D5-D5E6-403D-BD7C-25D633C5AAA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9EDE99D5-D5E6-403D-BD7C-25D633C5AAA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9EDE99D5-D5E6-403D-BD7C-25D633C5AAA3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3182F2AA-0F42-4F3F-943A-602A0FAB92A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3182F2AA-0F42-4F3F-943A-602A0FAB92A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3182F2AA-0F42-4F3F-943A-602A0FAB92A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3182F2AA-0F42-4F3F-943A-602A0FAB92A3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

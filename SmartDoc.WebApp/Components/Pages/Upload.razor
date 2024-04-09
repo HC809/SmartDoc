@@ -1,5 +1,9 @@
 ﻿@page "/upload"
 @rendermode InteractiveServer
+@using System.Net.Http.Headers
+@using SmartDoc.WebApp.Models
+@inject HttpClient Http
+
 
 <PageTitle>Upload File & Analyze</PageTitle>
 
@@ -16,13 +20,13 @@ else
 
     @if (selectedFile != null)
     {
-        <button class="btn btn-primary mr-2" disabled="@isLoading"><i class="bi bi-file-earmark-break"></i> Analizar</button>
-        <button class="btn btn-secondary" @onclick="ClearFile"><i class="bi bi-x-lg"></i> Cancelar</button>
+        <button @onclick="AnalyzeFile" class="btn btn-primary mr-2" disabled="@isLoading"><i class="bi bi-file-earmark-break"></i> Analizar</button>
+        <button @onclick="ClearFile" class="btn btn-secondary"><i class="bi bi-x-lg"></i> Cancelar</button>
     }
 
     @if (errors.Count > 0)
     {
-        <div class="error-messages">
+        <div class="error-messages mt-2">
             <h3>@(errors.Count > 1 ? "Errores" : "Error")</h3>
             <ul>
                 @foreach (var error in errors)
@@ -74,6 +78,53 @@ else
 
         selectedFile = file;
         isLoading = false;
+    }
+
+    private async Task AnalyzeFile()
+    {
+        isLoading = true;
+        errors.Clear();
+
+        if (selectedFile is null)
+        {
+            errors.Add("Por favor, selecciona un archivo antes de analizar.");
+            isLoading = false;
+            return;
+        }
+
+        try
+        {
+            using var content = new MultipartFormDataContent();
+
+            var fileContent = new StreamContent(selectedFile.OpenReadStream(maxFileSize));
+            fileContent.Headers.ContentType = new MediaTypeHeaderValue(selectedFile.ContentType);
+            content.Add(fileContent, "file", selectedFile.Name);
+
+            var response = await Http.PostAsync("https://localhost:7004/api/File", content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var fileUploadResult = await response.Content.ReadFromJsonAsync<FileUploadResult>();
+
+                if (fileUploadResult is not null)
+                {
+                    Console.WriteLine($"Response File Name: {fileUploadResult.FileName}");
+                    Console.WriteLine($"Response File Length: {fileUploadResult.FileLength}");
+                }
+            }
+            else
+            {
+                errors.Add("Hubo un error al procesar el archivo.");    
+            }
+        }
+        catch (Exception ex)
+        {
+            errors.Add($"Error: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+        }
     }
 
     private void ClearFile()
