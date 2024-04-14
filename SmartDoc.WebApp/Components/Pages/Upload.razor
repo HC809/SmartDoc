@@ -4,7 +4,6 @@
 @using SmartDoc.WebApp.Models
 @inject HttpClient Http
 
-
 <PageTitle>Upload File & Analyze</PageTitle>
 
 <h2 class="mb-2">Cargar y Analizar Archivo</h2>
@@ -16,7 +15,6 @@
 else
 {
     <InputFile OnChange="LoadFile" class="form-control mb-2" disabled="@isLoading" @key="@(inputFileKey)">Cargar</InputFile>
-
 
     @if (selectedFile != null)
     {
@@ -36,6 +34,12 @@ else
             </ul>
         </div>
     }
+
+    @if (!string.IsNullOrEmpty(testVendorName) && !string.IsNullOrEmpty(testCustomerName))
+    {
+        <p>Vendedor: @testVendorName</p>
+        <p>Cliente: @testCustomerName</p>
+    }
 }
 
 @code {
@@ -45,6 +49,8 @@ else
     private bool isLoading = false;
     private List<string> errors = new();
     private IBrowserFile? selectedFile;
+    private string testVendorName = string.Empty;
+    private string testCustomerName = string.Empty;
 
     private void LoadFile(InputFileChangeEventArgs e)
     {
@@ -108,13 +114,13 @@ else
 
                 if (fileUploadResult is not null)
                 {
-                    Console.WriteLine($"Response Vendor Name: {fileUploadResult.VendorName}");
-                    Console.WriteLine($"Response Customer Length: {fileUploadResult.CustomerName}");
+                    testVendorName = fileUploadResult.VendorName ?? "No se obtuvo.";
+                    testCustomerName = fileUploadResult.CustomerName ?? "No se obtuvo.";
                 }
             }
             else
             {
-                errors.Add("Hubo un error al procesar el archivo.");    
+                errors.Add("Hubo un error al procesar el archivo.");
             }
         }
         catch (Exception ex)
@@ -132,5 +138,8 @@ else
         selectedFile = null;
         errors.Clear();
         inputFileKey = Guid.NewGuid();
+
+        testVendorName = string.Empty;
+        testCustomerName = string.Empty;
     }
 }
