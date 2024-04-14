@@ -1,6 +1,5 @@
 ﻿using Azure;
 using Azure.AI.FormRecognizer.DocumentAnalysis;
-using Azure.Core;
 
 namespace SmartDoc.BL.Services.InvoiceAnalyze;
 
@@ -21,10 +20,14 @@ internal sealed class InvoiceAnalysisService : IInvoiceAnalysisService
         var docFields = document.Fields;
 
         InvoiceData response = new(
-            TryGetFieldContent(docFields, "CustomerName", DocumentFieldType.String) ?? "NA",
-            TryGetFieldContent(docFields, "VendorName", DocumentFieldType.String) ?? "NA"
+            TryGetFieldContent(docFields, "VendorName", DocumentFieldType.String) ?? "N/D",
+            TryGetFieldContent(docFields, "VendorAddress", DocumentFieldType.Address) ?? "N/D",
+            TryGetFieldContent(docFields, "CustomerName", DocumentFieldType.String) ?? "N/D",
+            TryGetFieldContent(docFields, "CustomerAddress", DocumentFieldType.Address) ?? "N/D",
+            TryGetFieldContent(docFields, "InvoiceId", DocumentFieldType.String) ?? "N/D",
+            TryGetFieldContent(docFields, "InvoiceDate", DocumentFieldType.Date) ?? "N/D",
+            TryGetFieldContent(docFields, "InvoiceTotal", DocumentFieldType.Currency) ?? "0.00"
             );
-
 
         return response;
     }

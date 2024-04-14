@@ -28,6 +28,7 @@ internal sealed class DocumentClassifierService : IDocumentClassifierService
             analyzeResult.Content.Contains("Cliente", StringComparison.OrdinalIgnoreCase) ||
             analyzeResult.Content.Contains("Customer", StringComparison.OrdinalIgnoreCase) ||
             analyzeResult.Content.Contains("SubTotal", StringComparison.OrdinalIgnoreCase) ||
+            analyzeResult.Content.Contains("Rechnungsbetrag", StringComparison.OrdinalIgnoreCase) ||
             analyzeResult.Content.Contains("Total", StringComparison.OrdinalIgnoreCase);
     }
 }

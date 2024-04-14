@@ -10,7 +10,7 @@
 
 @if (isLoading)
 {
-    <p>Cargando...</p>
+    <p>Analizando documento...</p>
 }
 else
 {
@@ -35,11 +35,29 @@ else
         </div>
     }
 
-    @if (!string.IsNullOrEmpty(testVendorName) && !string.IsNullOrEmpty(testCustomerName))
+    @if (invoiceAnalysisResult.Success)
     {
-        <p>Vendedor: @testVendorName</p>
-        <p>Cliente: @testCustomerName</p>
+        <div class="card mt-2">
+            <div class="card-header">
+                Información de la Factura
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">Detalles del Vendedor</h5>
+                <p class="card-text">Nombre: @invoiceAnalysisResult.Data.VendorName</p>
+                <p class="card-text">Dirección: @invoiceAnalysisResult.Data.VendorAddress</p>
+
+                <h5 class="card-title">Detalles del Cliente</h5>
+                <p class="card-text">Nombre: @invoiceAnalysisResult.Data.CustomerName</p>
+                <p class="card-text">Dirección: @invoiceAnalysisResult.Data.CustomerAddress</p>
+
+                <h5 class="card-title">Detalles de la Factura</h5>
+                <p class="card-text">ID de Factura: @invoiceAnalysisResult.Data.InvoiceId</p>
+                <p class="card-text">Fecha de Factura: @invoiceAnalysisResult.Data.InvoiceDate</p>
+                <p class="card-text">Total: @invoiceAnalysisResult.Data.Total</p>
+            </div>
+        </div>
     }
+
 }
 
 @code {
@@ -49,8 +67,7 @@ else
     private bool isLoading = false;
     private List<string> errors = new();
     private IBrowserFile? selectedFile;
-    private string testVendorName = string.Empty;
-    private string testCustomerName = string.Empty;
+    private InvoiceAnalysisResult invoiceAnalysisResult = new InvoiceAnalysisResult() { Success = false };
 
     private void LoadFile(InputFileChangeEventArgs e)
     {
@@ -110,13 +127,12 @@ else
 
             if (response.IsSuccessStatusCode)
             {
-                var fileUploadResult = await response.Content.ReadFromJsonAsync<InvoiceAnalysisResult>();
+                var invoiceAnalysisResponse = await response.Content.ReadFromJsonAsync<InvoiceAnalysisResult>();
 
-                if (fileUploadResult is not null && fileUploadResult.DocumentType == DocumentType.Invoice)
+                if (invoiceAnalysisResponse is not null && invoiceAnalysisResponse.DocumentType == DocumentType.Invoice)
                 {
-                    selectedFile = null;
-                    testVendorName = fileUploadResult.Data.VendorName;
-                    testCustomerName = fileUploadResult.Data.CustomerName;
+                    invoiceAnalysisResult = invoiceAnalysisResponse;
+                    invoiceAnalysisResult.Success = true;
                 }
             }
             else
@@ -124,7 +140,7 @@ else
                 selectedFile = null;
                 var errorResponse = await response.Content.ReadFromJsonAsync<FileErrorResult>();
                 var errorMessage = errorResponse?.ErrorMessage ?? "Un error desconocido ocurrió al procesar el archivo.";
-                errors.Add(errorMessage); 
+                errors.Add(errorMessage);
             }
         }
         catch (Exception ex)
@@ -144,7 +160,6 @@ else
         errors.Clear();
         inputFileKey = Guid.NewGuid();
 
-        testVendorName = string.Empty;
-        testCustomerName = string.Empty;
+        invoiceAnalysisResult = new();
     }
 }

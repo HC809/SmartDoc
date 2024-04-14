@@ -2,7 +2,6 @@
 using SmartDoc.Api.Models;
 using SmartDoc.BL.Services.DocumentClassifier;
 using SmartDoc.BL.Services.InvoiceAnalyze;
-using System.IO;
 
 namespace SmartDoc.Api.Controllers;
 
