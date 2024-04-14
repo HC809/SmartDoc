@@ -45,7 +45,7 @@ else
 @code {
     private Guid inputFileKey = Guid.NewGuid();
     private long maxFileSize = 1024 * 1024 * 3; //3MB
-    private string[] allowedFileTypes = ["application/pdf", "image/jpg", "image/png"];
+    private string[] allowedFileTypes = ["application/pdf", "image/jpg", "image/jpeg", "image/png"];
     private bool isLoading = false;
     private List<string> errors = new();
     private IBrowserFile? selectedFile;
@@ -110,22 +110,27 @@ else
 
             if (response.IsSuccessStatusCode)
             {
-                var fileUploadResult = await response.Content.ReadFromJsonAsync<FileUploadResult>();
+                var fileUploadResult = await response.Content.ReadFromJsonAsync<InvoiceAnalysisResult>();
 
-                if (fileUploadResult is not null)
+                if (fileUploadResult is not null && fileUploadResult.DocumentType == DocumentType.Invoice)
                 {
-                    testVendorName = fileUploadResult.VendorName ?? "No se obtuvo.";
-                    testCustomerName = fileUploadResult.CustomerName ?? "No se obtuvo.";
+                    selectedFile = null;
+                    testVendorName = fileUploadResult.Data.VendorName;
+                    testCustomerName = fileUploadResult.Data.CustomerName;
                 }
             }
             else
             {
-                errors.Add("Hubo un error al procesar el archivo.");
+                selectedFile = null;
+                var errorResponse = await response.Content.ReadFromJsonAsync<FileErrorResult>();
+                var errorMessage = errorResponse?.ErrorMessage ?? "Un error desconocido ocurrió al procesar el archivo.";
+                errors.Add(errorMessage); 
             }
         }
         catch (Exception ex)
         {
             errors.Add($"Error: {ex.Message}");
+            selectedFile = null;
         }
         finally
         {
