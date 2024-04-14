@@ -2,6 +2,6 @@
 
 public sealed class FileUploadResult
 {
-    public string? FileName { get; init; }
-    public string? FileLength { get; init; }
+    public string? VendorName { get; init; }
+    public string? CustomerName { get; init; }
 }

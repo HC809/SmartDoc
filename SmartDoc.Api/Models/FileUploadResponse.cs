@@ -1,3 +1,7 @@
 ﻿namespace SmartDoc.Api.Models;
 
-public sealed record FileUploadResponse(string FileName, string FileLength);
+public sealed class FileUploadResponse
+{
+    public string VendorName { get; set; }
+    public string CustomerName { get; set; }
+}
