@@ -1,0 +1,85 @@
+﻿@using SmartDoc.WebApp.Models
+
+@if (IsVisible)
+{
+    <div class="modal @ModalClass" tabindex="-1" role="dialog" style="display:@ModalDisplay">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="invoiceModalLabel">Información de la Factura</h5>
+                    <button type="button" @onclick="Close" class="close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    @if (InvoiceDetails != null)
+                    {
+                        <div>
+                            <p><strong>Nombre del Vendedor:</strong> @InvoiceDetails.Data.VendorName</p>
+                            <p><strong>Dirección del Vendedor:</strong> @InvoiceDetails.Data.VendorAddress</p>
+                            <p><strong>Nombre del Cliente:</strong> @InvoiceDetails.Data.CustomerName</p>
+                            <p><strong>Dirección del Cliente:</strong> @InvoiceDetails.Data.CustomerAddress</p>
+                            <p><strong>ID de Factura:</strong> @InvoiceDetails.Data.InvoiceId</p>
+                            <p><strong>Fecha de Factura:</strong> @InvoiceDetails.Data.InvoiceDate</p>
+                            <p><strong>Total:</strong> @InvoiceDetails.Data.Total</p>
+                            <h5>Items de la Factura</h5>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Precio Unitario</th>
+                                        <th>Cantidad</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in InvoiceDetails.Data.Items)
+                                    {
+                                        <tr>
+                                            <td>@item.Name</td>
+                                            <td>@item.UnitPrice</td>
+                                            <td>@item.Quantity</td>
+                                            <td>@item.Total</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button type="button" @onclick="Close" class="btn btn-secondary">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public InvoiceAnalysisResult InvoiceDetails { get; set; }
+
+    [Parameter]
+    public bool IsVisible { get; set; } = true;
+
+    public string ModalDisplay = "block;";
+    public string ModalClass = "Show";
+    public bool ShowBackdrop = true;
+
+    public void Open()
+    {
+        ModalDisplay = "block;";
+        ModalClass = "Show";
+        ShowBackdrop = true;
+        StateHasChanged();
+    }
+
+    public void Close()
+    {
+        ModalDisplay = "none";
+        ModalClass = "";
+        ShowBackdrop = false;
+        StateHasChanged();
+    }
+}
+
