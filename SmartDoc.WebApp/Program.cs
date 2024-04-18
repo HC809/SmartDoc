@@ -1,4 +1,5 @@
 using SmartDoc.WebApp.Components;
+using SmartDoc.BL;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -6,6 +7,8 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddHttpClient();
+
+builder.Services.AddBusinessLogic();
 
 var app = builder.Build();
 

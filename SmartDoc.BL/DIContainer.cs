@@ -7,6 +7,11 @@ public static class DIContainer
 {
     public static IServiceCollection AddBusinessLogic(this IServiceCollection services)
     {
+        services.AddMediatR(config =>
+        {
+            config.RegisterServicesFromAssembly(typeof(DIContainer).Assembly);
+        });
+
         services.AddScoped<IDocumentClassifierService, DocumentClassifierService>();
         services.AddScoped<IInvoiceAnalysisService, InvoiceAnalysisService>();
 

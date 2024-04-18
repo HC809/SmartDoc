@@ -1,9 +1,12 @@
 ﻿@page "/upload"
 @rendermode InteractiveServer
 @using System.Net.Http.Headers
+@using MediatR
+@using SmartDoc.BL.FileNotificationLog.FileLoadNotificationLog
 @using SmartDoc.WebApp.Components.Modals
 @using SmartDoc.WebApp.Models
 @inject HttpClient Http
+@inject IMediator _mediator;
 
 <PageTitle>Upload File & Analyze</PageTitle>
 
@@ -58,7 +61,7 @@ else
     private InvoiceModal? InvoiceModalRef { get; set; }
     private bool showModal = false;
 
-    private void LoadFile(InputFileChangeEventArgs e)
+    private async Task LoadFile(InputFileChangeEventArgs e)
     {
         isLoading = true;
         selectedFile = null;
@@ -89,6 +92,9 @@ else
         }
 
         selectedFile = file;
+
+        await _mediator.Publish(new FileLoadNotificationLog(file.Name, fileSize));
+
         isLoading = false;
     }
 
