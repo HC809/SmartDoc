@@ -7,7 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmartDoc.WebApp", "SmartDoc
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmartDoc.Api", "SmartDoc.Api\SmartDoc.Api.csproj", "{3182F2AA-0F42-4F3F-943A-602A0FAB92A3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartDoc.BL", "SmartDoc.BL\SmartDoc.BL.csproj", "{D83FC357-198E-46E2-AD22-8614EC41E90A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmartDoc.BL", "SmartDoc.BL\SmartDoc.BL.csproj", "{D83FC357-198E-46E2-AD22-8614EC41E90A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartDoc.Data", "SmartDoc.Data\SmartDoc.Data.csproj", "{D7EFD279-B7FC-4A7E-9E58-18C5C2C41DDD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{D83FC357-198E-46E2-AD22-8614EC41E90A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D83FC357-198E-46E2-AD22-8614EC41E90A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D83FC357-198E-46E2-AD22-8614EC41E90A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D7EFD279-B7FC-4A7E-9E58-18C5C2C41DDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7EFD279-B7FC-4A7E-9E58-18C5C2C41DDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7EFD279-B7FC-4A7E-9E58-18C5C2C41DDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7EFD279-B7FC-4A7E-9E58-18C5C2C41DDD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

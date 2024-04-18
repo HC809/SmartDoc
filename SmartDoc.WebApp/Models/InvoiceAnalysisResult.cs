@@ -4,7 +4,7 @@ public sealed class InvoiceAnalysisResult
 {
     public bool Success { get; set; } = false;
     public DocumentType DocumentType { get; init; }
-    public InvoiceData Data { get; init; }
+    public InvoiceData? Data { get; init; }
 }
 
 public sealed record InvoiceData(
