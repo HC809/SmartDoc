@@ -2,7 +2,7 @@
 
 public sealed class InvoiceAnalysisResult
 {
-    public bool Success { get; set; }
+    public bool Success { get; set; } = false;
     public DocumentType DocumentType { get; init; }
     public InvoiceData Data { get; init; }
 }

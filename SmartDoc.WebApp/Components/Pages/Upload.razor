@@ -15,7 +15,7 @@
 }
 else
 {
-    <InputFile OnChange="LoadFile" class="form-control mb-2" disabled="@isLoading" @key="@(inputFileKey)">Cargar</InputFile>
+    <InputFile OnChange="LoadFile" class="form-control mb-3" disabled="@isLoading" @key="@(inputFileKey)">Cargar</InputFile>
 
     @if (selectedFile != null)
     {
@@ -39,7 +39,10 @@ else
     @if (invoiceAnalysisResult.Success)
     {
         <InvoiceModal @ref="InvoiceModalRef" InvoiceDetails="@invoiceAnalysisResult"></InvoiceModal>
-        <button @onclick="OpenModal" class="btn btn-primary mt-2">Mostrar Factura</button>
+        <div class="mt-3">
+            <button @onclick="OpenModal" class="btn btn-primary mr-2"><i class="bi bi-eye-fill"></i> Mostrar Factura</button>
+            <button @onclick="Cancel" class="btn btn-secondary"><i class="bi bi-x-lg"></i> Cancelar</button>
+        </div>
     }
 
 }
@@ -52,7 +55,7 @@ else
     private List<string> errors = new();
     private IBrowserFile? selectedFile;
     private InvoiceAnalysisResult invoiceAnalysisResult = new InvoiceAnalysisResult() { Success = false };
-    private InvoiceModal InvoiceModalRef { get; set; }
+    private InvoiceModal? InvoiceModalRef { get; set; }
     private bool showModal = false;
 
     private void LoadFile(InputFileChangeEventArgs e)
@@ -120,7 +123,7 @@ else
                     invoiceAnalysisResult = invoiceAnalysisResponse;
                     invoiceAnalysisResult.Success = true;
 
-                    //ClearFile();
+                    ClearFile();
                 }
             }
             else
@@ -156,4 +159,9 @@ else
     }
 
     private void OpenModal() => InvoiceModalRef.Open();
+
+    private void CancelModal()
+    {
+        invoiceAnalysisResult = new();
+    }
 }
