@@ -19,7 +19,7 @@ else
     @if (selectedFile != null)
     {
         <button @onclick="AnalyzeFile" class="btn btn-primary mr-2" disabled="@isLoading"><i class="bi bi-file-earmark-break"></i> Analizar</button>
-        <button @onclick="ClearFile" class="btn btn-secondary"><i class="bi bi-x-lg"></i> Cancelar</button>
+        <button @onclick="Cancel" class="btn btn-secondary"><i class="bi bi-x-lg"></i> Cancelar</button>
     }
 
     @if (errors.Count > 0)
@@ -54,6 +54,29 @@ else
                 <p class="card-text">ID de Factura: @invoiceAnalysisResult.Data.InvoiceId</p>
                 <p class="card-text">Fecha de Factura: @invoiceAnalysisResult.Data.InvoiceDate</p>
                 <p class="card-text">Total: @invoiceAnalysisResult.Data.Total</p>
+
+                <h5 class="card-title">Items de la Factura</h5>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Precio Unitario</th>
+                            <th>Cantidad</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in invoiceAnalysisResult.Data.Items)
+                        {
+                            <tr>
+                                <td>@item.Name</td>
+                                <td>@item.UnitPrice</td>
+                                <td>@item.Quantity</td>
+                                <td>@item.Total</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             </div>
         </div>
     }
@@ -133,6 +156,8 @@ else
                 {
                     invoiceAnalysisResult = invoiceAnalysisResponse;
                     invoiceAnalysisResult.Success = true;
+
+                    ClearFile();
                 }
             }
             else
@@ -159,7 +184,11 @@ else
         selectedFile = null;
         errors.Clear();
         inputFileKey = Guid.NewGuid();
+    }
 
+    private void Cancel()
+    {
+        ClearFile();
         invoiceAnalysisResult = new();
     }
 }

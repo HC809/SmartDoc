@@ -14,5 +14,13 @@ public sealed record InvoiceData(
     string CustomerAddress,
     string InvoiceId,
     string InvoiceDate,
-    string Total
-    );
+    string Total,
+    IEnumerable<Items> Items);
+
+public sealed record Items(
+    string Name,
+    string UnitPrice,
+    string Quantity,
+    string Total);
+
+
