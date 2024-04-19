@@ -61,7 +61,7 @@ else
     private InvoiceModal? InvoiceModalRef { get; set; }
     private bool showModal = false;
 
-    private async Task LoadFile(InputFileChangeEventArgs e)
+    private void LoadFile(InputFileChangeEventArgs e)
     {
         isLoading = true;
         selectedFile = null;
@@ -93,7 +93,7 @@ else
 
         selectedFile = file;
 
-        await _mediator.Publish(new FileLoadNotificationLog(file.Name, fileSize));
+        _mediator.Publish(new FileLoadNotificationLog(file.Name, fileSize));
 
         isLoading = false;
     }
@@ -164,7 +164,7 @@ else
         invoiceAnalysisResult = new();
     }
 
-    private void OpenModal() => InvoiceModalRef.Open();
+    private void OpenModal() => InvoiceModalRef?.Open();
 
     private void CancelModal()
     {

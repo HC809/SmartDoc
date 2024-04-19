@@ -18,9 +18,16 @@ internal class FileLoadNotificationLogHandler : INotificationHandler<FileLoadNot
     public async Task Handle(FileLoadNotificationLog notification, CancellationToken cancellationToken)
     {
         var logDescription = new Description($"Nombre: {notification.FileName}, Tamaño: {notification.FileSize}");
-        var logEntry = FileLogEntry.Register(FileActionType.FileUpload, logDescription);
+        var logEntry = FileLogEntry.Register(FileActionType.FileUpload, logDescription, DateTime.Now);
 
-        _documentLogEntryRepository.Add(logEntry);
-        await _unitOfWork.SaveChangesAsync();
+        try
+        {
+            _documentLogEntryRepository.Add(logEntry);
+            await _unitOfWork.SaveChangesAsync();
+        }
+        catch (Exception)
+        {
+            throw;
+        }
     }
 }

@@ -27,7 +27,8 @@ internal sealed class FileLogEntryConfiguration : IEntityTypeConfiguration<FileL
                 value => new Description(value)
             );
 
-        builder.Property(x => x.Timestamp)
-            .IsRequired();
+        builder.Property(x => x.CreatedOn)
+            .IsRequired()
+            .HasColumnType("smalldatetime");
     }
 }
