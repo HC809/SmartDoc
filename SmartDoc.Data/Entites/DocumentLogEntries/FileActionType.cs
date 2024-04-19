@@ -1,7 +1,7 @@
 ﻿namespace SmartDoc.Data.Entites.DocumentLogEntries;
-public enum DocumentActionType
+public enum FileActionType
 {
-    DocumentUpload,
+    FileUpload,
     AIAnalysis,
     UserInteraction
 }
