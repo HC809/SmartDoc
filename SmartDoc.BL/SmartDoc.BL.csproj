@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\SmartDoc.DataAccess\SmartDoc.DataAccess.csproj" />
     <ProjectReference Include="..\SmartDoc.Data\SmartDoc.Data.csproj" />
   </ItemGroup>
 

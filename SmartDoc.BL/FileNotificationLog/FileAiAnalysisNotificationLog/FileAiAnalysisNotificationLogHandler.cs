@@ -6,12 +6,12 @@ using SmartDoc.Data.Entites.DocumentLogEntries;
 namespace SmartDoc.BL.DocumentLog.DocumentUploadLog;
 internal class FileAiAnalysisNotificationLogHandler : INotificationHandler<FileAiAnalysisNotificationLog>
 {
-    private readonly IFileLogEntryRepository _documentLogEntryRepository;
+    private readonly IFileLogEntryRepository _fileLogEntryRepository;
     private readonly IUnitOfWork _unitOfWork;
 
-    public FileAiAnalysisNotificationLogHandler(IFileLogEntryRepository documentLogEntryRepository, IUnitOfWork unitOfWork)
+    public FileAiAnalysisNotificationLogHandler(IFileLogEntryRepository fileLogEntryRepository, IUnitOfWork unitOfWork)
     {
-        _documentLogEntryRepository = documentLogEntryRepository;
+        _fileLogEntryRepository = fileLogEntryRepository;
         _unitOfWork = unitOfWork;
     }
 
@@ -22,7 +22,7 @@ internal class FileAiAnalysisNotificationLogHandler : INotificationHandler<FileA
 
         try
         {
-            _documentLogEntryRepository.Add(logEntry);
+            _fileLogEntryRepository.Add(logEntry);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
         catch (Exception)
