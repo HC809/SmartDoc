@@ -3,7 +3,7 @@
 namespace SmartDoc.Data.Entites.DocumentLogEntries;
 public sealed class FileLogEntry : Entity
 {
-    public FileLogEntry(Guid id, FileActionType actionType, Description description, DateTime createdOn) : base(id)
+    public FileLogEntry(int id, FileActionType actionType, Description description, DateTime createdOn) : base(id)
     {
         ActionType = actionType;
         Description = description;
@@ -16,11 +16,7 @@ public sealed class FileLogEntry : Entity
 
     public static FileLogEntry Register(FileActionType actionType, Description description, DateTime createdOn)
     {
-        var documentLog = new FileLogEntry(
-            Guid.NewGuid(),
-            actionType,
-            description,
-            createdOn);
+        var documentLog = new FileLogEntry(0, actionType, description, createdOn);
 
         return documentLog;
     }

@@ -1,8 +1,8 @@
 ﻿namespace SmartDoc.Data.Abstractions;
 public abstract class Entity
 {
-    protected Entity(Guid id) => Id = id;
+    protected Entity(int id) => Id = id;
     protected Entity() { }
 
-    public Guid Id { get; init; }
+    public int Id { get; init; }
 }

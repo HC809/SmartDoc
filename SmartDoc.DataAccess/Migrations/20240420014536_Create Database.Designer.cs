@@ -12,8 +12,8 @@ using SmartDoc.DataAccess;
 namespace SmartDoc.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240419023707_Rename TimeStamp")]
-    partial class RenameTimeStamp
+    [Migration("20240420014536_Create Database")]
+    partial class CreateDatabase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,9 +27,11 @@ namespace SmartDoc.DataAccess.Migrations
 
             modelBuilder.Entity("SmartDoc.Data.Entites.DocumentLogEntries.FileLogEntry", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ActionType")
                         .IsRequired()

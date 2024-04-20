@@ -1,6 +1,5 @@
+using Serilog;
 using SmartDoc.WebApp.Components;
-using SmartDoc.BL;
-using SmartDoc.DataAccess;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,8 +8,16 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddHttpClient();
 
-builder.Services.AddBusinessLogic();
-builder.Services.AddDataAccess(builder.Configuration);
+builder.Host.UseSerilog((context, config) =>
+{
+    config.ReadFrom.Configuration(context.Configuration);
+});
+
+Serilog.Debugging.SelfLog.Enable(msg =>
+{
+    Console.WriteLine(msg);
+    System.Diagnostics.Debug.WriteLine(msg); // También envía a la salida de depuración de Visual Studio
+});
 
 var app = builder.Build();
 

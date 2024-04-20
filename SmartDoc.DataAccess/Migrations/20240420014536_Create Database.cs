@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace SmartDoc.DataAccess.Migrations
 {
     /// <inheritdoc />
-    public partial class Create_DB : Migration
+    public partial class CreateDatabase : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,10 +15,11 @@ namespace SmartDoc.DataAccess.Migrations
                 name: "FileLogEntries",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     ActionType = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
-                    Timestamp = table.Column<DateTime>(type: "smalldatetime", nullable: false)
+                    CreatedOn = table.Column<DateTime>(type: "smalldatetime", nullable: false)
                 },
                 constraints: table =>
                 {

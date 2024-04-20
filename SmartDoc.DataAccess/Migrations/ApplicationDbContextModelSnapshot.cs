@@ -24,9 +24,11 @@ namespace SmartDoc.DataAccess.Migrations
 
             modelBuilder.Entity("SmartDoc.Data.Entites.DocumentLogEntries.FileLogEntry", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ActionType")
                         .IsRequired()
