@@ -1,5 +1,5 @@
 ﻿@page "/logs"
-@attribute [StreamRendering]
+@rendermode InteractiveServer
 @inject HttpClient Http
 
 @using SmartDoc.WebApp.Models
@@ -9,6 +9,32 @@
 <h2>Histórico</h2>
 
 <p>This component demonstrates showing data.</p>
+
+<div class="row mb-3">
+    <div class="col">
+        <input type="text" class="form-control" placeholder="Filter by ActionType" @bind="filterActionType">
+    </div>
+    <div class="col">
+        <input type="text" class="form-control" placeholder="Filter by Description" @bind="filterDescription">
+    </div>
+    <div class="col">
+        <input type="date" class="form-control" @bind="startDate" @oninput="HandleStartDateChange">
+    </div>
+    <div class="col">
+        <input type="date" class="form-control" @bind="endDate" @oninput="HandleEndDateChange">
+    </div>
+    <div class="col-auto">
+        <button class="btn btn-primary" @onclick="ApplyFilters" disabled="@(!allLogs.Any())">Filtrar</button>
+        <button class="btn btn-secondary" @onclick="ClearFilters">Reiniciar</button>
+    </div>
+</div>
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger" role="alert">
+        @errorMessage
+    </div>
+}
 
 @if (logs == null)
 {
@@ -40,19 +66,82 @@ else
 }
 
 @code {
-    private LogResult[]? logs;
+    private string filterActionType = "";
+    private string filterDescription = "";
+    private DateTime? startDate;
+    private DateTime? endDate;
+    private List<LogResult> logs = new();
+    private List<LogResult> allLogs = new();
+    private string errorMessage = "";
 
     protected override async Task OnInitializedAsync()
     {
         var response = await Http.GetAsync("https://localhost:7004/api/logs");
         if (response.IsSuccessStatusCode)
         {
-            logs = await response.Content.ReadFromJsonAsync<LogResult[]>();
+            allLogs = await response.Content.ReadFromJsonAsync<List<LogResult>>() ?? new();
+            if (allLogs.Any()) logs = allLogs;
+            StateHasChanged();
         }
         else
         {
-            Console.Error.WriteLine("Failed to load logs.");
+            errorMessage = "Error al cargar los logs.";
         }
     }
 
+    private void ApplyFilters()
+    {
+        if (allLogs is null || !allLogs.Any()) return;
+
+        logs = allLogs.Where(log =>
+            (string.IsNullOrEmpty(filterActionType) || log.ActionType.Contains(filterActionType, StringComparison.OrdinalIgnoreCase)) &&
+            (string.IsNullOrEmpty(filterDescription) || log.Description.Contains(filterDescription, StringComparison.OrdinalIgnoreCase)) &&
+            (!startDate.HasValue || log.CreatedOn.Date >= startDate.Value) &&
+            (!endDate.HasValue || log.CreatedOn.Date <= endDate.Value)
+        ).ToList();
+
+        StateHasChanged();
+    }
+
+    private void ClearFilters()
+    {
+        filterActionType = "";
+        filterDescription = "";
+        startDate = null;
+        endDate = null;
+        logs = allLogs.ToList();
+        StateHasChanged(); 
+    }
+
+    private void HandleStartDateChange(ChangeEventArgs e)
+    {
+        if (DateTime.TryParse(e.Value?.ToString(), out var newStartDate))
+        {
+            startDate = newStartDate;
+            ValidateDates();
+        }
+    }
+
+    private void HandleEndDateChange(ChangeEventArgs e)
+    {
+        if (DateTime.TryParse(e.Value?.ToString(), out var newEndDate))
+        {
+            endDate = newEndDate;
+            ValidateDates();
+        }
+    }
+
+    private void ValidateDates()
+    {
+        if (startDate.HasValue && endDate.HasValue && endDate < startDate)
+        {
+            errorMessage = "La fecha final debe ser igual o mayor a la fecha inicial.";
+        }
+        else
+        {
+            errorMessage = "";
+        }
+
+        StateHasChanged(); 
+    }
 }
