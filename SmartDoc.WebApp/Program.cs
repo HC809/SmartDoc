@@ -13,11 +13,11 @@ builder.Host.UseSerilog((context, config) =>
     config.ReadFrom.Configuration(context.Configuration);
 });
 
-Serilog.Debugging.SelfLog.Enable(msg =>
-{
-    Console.WriteLine(msg);
-    System.Diagnostics.Debug.WriteLine(msg); // También envía a la salida de depuración de Visual Studio
-});
+//Serilog.Debugging.SelfLog.Enable(msg =>
+//{
+//    Console.WriteLine(msg);
+//    System.Diagnostics.Debug.WriteLine(msg); 
+//});
 
 var app = builder.Build();
 

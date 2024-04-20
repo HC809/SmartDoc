@@ -1,6 +1,5 @@
 ﻿using Azure;
 using Azure.AI.FormRecognizer.DocumentAnalysis;
-using System.Reflection.Metadata;
 
 namespace SmartDoc.BL.Services.InvoiceAnalyze;
 

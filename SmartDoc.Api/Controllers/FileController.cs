@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using SmartDoc.Api.Models;
 using SmartDoc.BL.Services.DocumentClassifier;
 using SmartDoc.BL.Services.InvoiceAnalyze;
+using SmartDoc.BL.Services.FileNotificationLogFactory;
 
 namespace SmartDoc.Api.Controllers;
 
@@ -12,11 +14,19 @@ public class FileController : ControllerBase
 {
     private readonly IDocumentClassifierService _documentClassifierService;
     private readonly IInvoiceAnalysisService _invoiceAnalisisService;
+    private readonly IFileNotificationLogFactory _logFactory;
+    private readonly IMediator _mediator;
 
-    public FileController(IDocumentClassifierService documentClassifierService, IInvoiceAnalysisService invoiceAnalisisService)
+    public FileController(
+        IDocumentClassifierService documentClassifierService, 
+        IInvoiceAnalysisService invoiceAnalisisService,
+        IFileNotificationLogFactory logFactory,
+        IMediator mediator)
     {
         _documentClassifierService = documentClassifierService;
         _invoiceAnalisisService = invoiceAnalisisService;
+        _logFactory = logFactory;
+        _mediator = mediator;
     }
 
     [HttpPost]
@@ -26,6 +36,9 @@ public class FileController : ControllerBase
         {
             return BadRequest("No se logro cargar ningun archivo. Intente nuevamente.");
         }
+
+        var logEntry = _logFactory.Create("Azure FormRecognizer", file.Name, file.Length);
+        await _mediator.Publish(logEntry);
 
         MemoryStream memoryStream = new MemoryStream();
 
