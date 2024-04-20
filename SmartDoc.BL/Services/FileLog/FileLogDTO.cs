@@ -3,6 +3,6 @@
 namespace SmartDoc.BL.Services.Log;
 public sealed record FileLogDTO(
         int Id,
-        FileActionType ActionType,
+        string ActionType,
         string Description,
         DateTime CreatedOn);

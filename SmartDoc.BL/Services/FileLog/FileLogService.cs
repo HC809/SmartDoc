@@ -14,7 +14,7 @@ public sealed class FileLogService : IFileLogService
     {
         var logs = await _fileLogRepository.GetAllAsync();
 
-        var logDTOs = logs.Select(log => new FileLogDTO(log.Id, log.ActionType, log.Description.Value, log.CreatedOn)).ToList();
+        var logDTOs = logs.Select(log => new FileLogDTO(log.Id, log.ActionType.ToString(), log.Description.Value, log.CreatedOn)).ToList();
 
         return logDTOs;
     }
