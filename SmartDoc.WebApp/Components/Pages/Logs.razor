@@ -1,4 +1,5 @@
 ﻿@page "/logs"
+@attribute [StreamRendering]
 @rendermode InteractiveServer
 @inject HttpClient Http
 
@@ -9,6 +10,15 @@
 <h2>Histórico</h2>
 
 <p>This component demonstrates showing data.</p>
+
+@if (logs.Any())
+{
+    <div class="row">
+        <div class="col-12 d-flex justify-content-end">
+            <a href="@GenerateDownloadUrl()" class="btn btn-success mb-3" download="FilteredLogs.xlsx" style="width: 200px;">Descargar Excel</a>
+        </div>
+    </div>
+}
 
 <div class="row mb-3">
     <div class="col">
@@ -24,10 +34,11 @@
         <input type="date" class="form-control" @bind="endDate" @oninput="HandleEndDateChange">
     </div>
     <div class="col-auto">
-        <button class="btn btn-primary" @onclick="ApplyFilters" disabled="@(!allLogs.Any())">Filtrar</button>
-        <button class="btn btn-secondary" @onclick="ClearFilters">Reiniciar</button>
+        <button class="btn btn-primary" @onclick="ApplyFilters" disabled="@IsApplyDisabled()">Filtrar</button>
+        <button class="btn btn-secondary" @onclick="ClearFilters" disabled="@IsApplyDisabled()">Reiniciar</button>
     </div>
 </div>
+
 
 @if (!string.IsNullOrEmpty(errorMessage))
 {
@@ -110,7 +121,7 @@ else
         startDate = null;
         endDate = null;
         logs = allLogs.ToList();
-        StateHasChanged(); 
+        StateHasChanged();
     }
 
     private void HandleStartDateChange(ChangeEventArgs e)
@@ -134,14 +145,35 @@ else
     private void ValidateDates()
     {
         if (startDate.HasValue && endDate.HasValue && endDate < startDate)
-        {
             errorMessage = "La fecha final debe ser igual o mayor a la fecha inicial.";
-        }
         else
-        {
             errorMessage = "";
-        }
 
-        StateHasChanged(); 
+        StateHasChanged();
     }
+
+    private bool IsApplyDisabled()
+    {
+        return string.IsNullOrEmpty(filterActionType) && string.IsNullOrEmpty(filterDescription) && !startDate.HasValue && !endDate.HasValue;
+    }
+
+    @code {
+        private string GenerateDownloadUrl()
+        {
+            var baseUrl = "https://localhost:7004/api/logs/download";
+            var query = $"?actionType={Uri.EscapeDataString(filterActionType ?? "")}&description={Uri.EscapeDataString(filterDescription ?? "")}";
+
+            if (startDate.HasValue)
+            {
+                query += $"&startDate={startDate.Value.ToString("yyyy-MM-dd")}";
+            }
+            if (endDate.HasValue)
+            {
+                query += $"&endDate={endDate.Value.ToString("yyyy-MM-dd")}";
+            }
+
+            return baseUrl + query;
+        }
+    }
+
 }
