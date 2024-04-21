@@ -14,17 +14,18 @@ public sealed class FileLogService : IFileLogService
     public async Task<IEnumerable<FileLogDTO>> GetAllLogs()
     {
         var logs = await _fileLogRepository.GetAllAsync();
-
-        var logDTOs = logs.Select(log => new FileLogDTO(log.Id, log.ActionType.ToString(), log.Description.Value, log.CreatedOn)).ToList();
+        var logDTOs = logs.Select(log => new FileLogDTO(log.Id, log.ActionType.ToString(), log.Description, log.CreatedOn)).ToList();
 
         return logDTOs;
     }
 
     public async Task<IEnumerable<FileLogDTO>> GetFilteredLogs(string? actionType = null, string? description = null, DateTime? startDate = null, DateTime? endDate = null)
     {
-        var filteredLogs = await _fileLogRepository.GetFilteredAsync(ParseActionType(actionType), description, startDate, endDate);
+        var filteredLogs = (!string.IsNullOrEmpty(actionType) || !string.IsNullOrEmpty(description) || startDate != null || endDate != null)
+            ? await _fileLogRepository.GetFilteredAsync(actionType, description, startDate, endDate)
+            : await _fileLogRepository.GetAllAsync();
 
-        var filteredLogDTOs = filteredLogs.Select(log => new FileLogDTO(log.Id, log.ActionType.ToString(), log.Description.Value, log.CreatedOn)).ToList();
+        var filteredLogDTOs = filteredLogs.Select(log => new FileLogDTO(log.Id, log.ActionType.ToString(), log.Description, log.CreatedOn)).ToList();
 
         return filteredLogDTOs;
     }
@@ -55,20 +56,6 @@ public sealed class FileLogService : IFileLogService
                 return stream.ToArray();
             }
         }
-    }
-
-    public static FileActionType? ParseActionType(string? actionType)
-    {
-        if (string.IsNullOrEmpty(actionType)) return null;
-
-        FileActionType result;
-        var match = Enum.GetNames(typeof(FileActionType))
-                        .FirstOrDefault(name => name.IndexOf(actionType, StringComparison.OrdinalIgnoreCase) >= 0);
-
-        if (match != null && Enum.TryParse(match, true, out result))
-            return result;
-
-        return null;
     }
 }
 

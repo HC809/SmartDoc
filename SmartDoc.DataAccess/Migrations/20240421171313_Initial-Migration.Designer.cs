@@ -12,8 +12,8 @@ using SmartDoc.DataAccess;
 namespace SmartDoc.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240420014536_Create Database")]
-    partial class CreateDatabase
+    [Migration("20240421171313_Initial-Migration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

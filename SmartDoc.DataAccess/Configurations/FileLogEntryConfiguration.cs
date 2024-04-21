@@ -21,11 +21,7 @@ internal sealed class FileLogEntryConfiguration : IEntityTypeConfiguration<FileL
 
         builder.Property(x => x.Description)
            .IsRequired()
-           .HasMaxLength(500)
-           .HasConversion(
-                description => description.Value,
-                value => new Description(value)
-            );
+           .HasMaxLength(500);
 
         builder.Property(x => x.CreatedOn)
             .IsRequired()

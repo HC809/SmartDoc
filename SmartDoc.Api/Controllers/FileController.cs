@@ -37,7 +37,7 @@ public class FileController : ControllerBase
             return BadRequest("No se logro cargar ningun archivo. Intente nuevamente.");
         }
 
-        var logEntry = _logFactory.Create("Azure FormRecognizer", file.Name, file.Length);
+        var logEntry = _logFactory.Create("Azure FormRecognizer", file.FileName, file.Length);
         await _mediator.Publish(logEntry);
 
         MemoryStream memoryStream = new MemoryStream();

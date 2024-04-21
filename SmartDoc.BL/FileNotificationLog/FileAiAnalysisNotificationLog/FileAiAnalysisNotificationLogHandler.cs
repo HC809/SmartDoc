@@ -17,7 +17,7 @@ internal class FileAiAnalysisNotificationLogHandler : INotificationHandler<FileA
 
     public async Task Handle(FileAiAnalysisNotificationLog notification, CancellationToken cancellationToken)
     {
-        var logDescription = new Description($"AI: {notification.AIName}, File: {notification.FileName}, Size: {notification.FileSize}");
+        var logDescription = $"AI: {notification.AIName}, File: {notification.FileName}, Size: {notification.FileSize}";
         var logEntry = FileLogEntry.Register(FileActionType.AIAnalysis, logDescription, DateTime.Now);
 
         try
