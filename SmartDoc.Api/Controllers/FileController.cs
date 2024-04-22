@@ -33,6 +33,17 @@ public class FileController : ControllerBase
         _mediator = mediator;
     }
 
+    /// <summary>
+    /// This C# function analyzes a file uploaded through a form, determines its type (invoice or
+    /// information), and performs specific analysis based on the type.
+    /// </summary>
+    /// <param name="IFormFile">The code snippet you provided is a C# method that analyzes a file
+    /// uploaded through a form. The method `AnalyzeFile` is an HTTP POST endpoint that takes an
+    /// `IFormFile` parameter named `file`. Here's a breakdown of the code:</param>
+    /// <returns>
+    /// The AnalyzeFile method returns different types of responses based on the type of document being
+    /// analyzed:
+    /// </returns>
     [HttpPost]
     public async Task<IActionResult> AnalyzeFile([FromForm] IFormFile file)
     {

@@ -9,6 +9,37 @@ public sealed class FileLogEntryRepository : Repository<FileLogEntry>, IFileLogE
     {
     }
 
+    /// <summary>
+    /// This C# async method retrieves filtered FileLogEntry records based on specified criteria using
+    /// raw SQL query and parameters.
+    /// </summary>
+    /// <param name="actionType">The `actionType` parameter is used to filter the log entries based on
+    /// the type of action performed. If a value is provided for `actionType`, only log entries with a
+    /// matching `ActionType` will be included in the result. If `actionType` is `null`, all log
+    /// entries</param>
+    /// <param name="description">The `description` parameter in the `GetFilteredAsync` method is used
+    /// to filter the log entries based on the description of the action. If a value is provided for the
+    /// `description` parameter, the method will only return log entries where the description contains
+    /// the specified value (case-insensitive search using</param>
+    /// <param name="startDate">The `startDate` parameter in the `GetFilteredAsync` method is used to
+    /// filter log entries based on the date they were created. If a `startDate` value is provided, only
+    /// log entries created on or after that date will be included in the result. If `startDate` is not
+    /// provided (</param>
+    /// <param name="endDate">The `endDate` parameter in the `GetFilteredAsync` method is used to filter
+    /// the log entries based on the date they were created. If a value is provided for `endDate`, only
+    /// log entries created on or before that date will be included in the result. If `endDate` is not
+    /// provided</param>
+    /// <param name="CancellationToken">The CancellationToken parameter in the GetFilteredAsync method
+    /// allows you to pass a token that can be used to request cancellation of the asynchronous
+    /// operation. This token can be used to notify the operation that it should be canceled, allowing
+    /// for graceful termination of the operation if needed. It is a way to provide a means</param>
+    /// <returns>
+    /// This method returns a collection of `FileLogEntry` objects that match the specified filter
+    /// criteria. The filter criteria include `actionType`, `description`, `startDate`, and `endDate`.
+    /// The method executes a raw SQL query against the `FileLogEntries` table in the database using the
+    /// provided filter parameters. The query filters the results based on the provided criteria and
+    /// returns the filtered logs as a collection of
+    /// </returns>
     public async Task<IEnumerable<FileLogEntry>> GetFilteredAsync(
         string? actionType = null,
         string? description = null,
