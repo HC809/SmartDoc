@@ -4,6 +4,7 @@
 @using Serilog
 @using SmartDoc.WebApp.Components.Modals
 @using SmartDoc.WebApp.Models
+@using System.Text.Json
 @inject HttpClient Http
 
 <PageTitle>Analyze</PageTitle>
@@ -41,23 +42,40 @@ else
     {
         <InvoiceModal @ref="invoiceModalRef" InvoiceDetails="@invoiceAnalysisResult"></InvoiceModal>
         <div class="mt-3">
-            <button @onclick="OpenModal" class="btn btn-primary mr-2"><i class="bi bi-eye-fill"></i> Mostrar Factura</button>
+            <button @onclick="OpenInvoiceModal" class="btn btn-primary mr-2"><i class="bi bi-eye-fill"></i> Mostrar Factura</button>
             <button @onclick="Cancel" class="btn btn-secondary"><i class="bi bi-x-lg"></i> Cancelar</button>
         </div>
     }
 
+    @if (sentimentAnalysisResult.Success)
+    {
+        <SentimentModal @ref="sentimentModalRef" SentimentAnalysisResult="@sentimentAnalysisResult"></SentimentModal>
+        <div class="mt-3">
+            <button @onclick="OpenSentimentModal" class="btn btn-primary mr-2"><i class="bi bi-eye-fill"></i> Mostrar Sentimiento</button>
+            <button @onclick="Cancel" class="btn btn-secondary"><i class="bi bi-x-lg"></i> Cancelar</button>
+        </div>
+    }
 }
 
 @code {
+    //General
+    private bool isLoading = false;
+    private List<string> errors = new();
+
+    //Files
     private Guid inputFileKey = Guid.NewGuid();
     private long maxFileSize = 1024 * 1024 * 3; //3MB
     private string[] allowedFileTypes = ["application/pdf", "image/jpg", "image/jpeg", "image/png"];
-    private bool isLoading = false;
-    private List<string> errors = new();
     private IBrowserFile? selectedFile;
+    private string logActionType = "FileUpload";
+
+    //Invoice
     private InvoiceAnalysisResult invoiceAnalysisResult = new InvoiceAnalysisResult() { Success = false };
     private InvoiceModal? invoiceModalRef { get; set; }
-    private string logActionType = "FileUpload";
+
+    //Sentiment
+    private SentimentAnalysisResult sentimentAnalysisResult = new SentimentAnalysisResult() { Success = false };
+    private SentimentModal? sentimentModalRef { get; set; }
 
     private void LoadFile(InputFileChangeEventArgs e)
     {
@@ -123,23 +141,65 @@ else
 
             if (response.IsSuccessStatusCode)
             {
-                var invoiceAnalysisResponse = await response.Content.ReadFromJsonAsync<InvoiceAnalysisResult>();
+                var responseContent = await response.Content.ReadAsStringAsync();
+                var fileAnalysisResponse = Newtonsoft.Json.JsonConvert.DeserializeObject<FileAnalysisResponse>(responseContent);
 
-                if (invoiceAnalysisResponse is not null && invoiceAnalysisResponse.DocumentType == DocumentType.Invoice)
+                if (fileAnalysisResponse != null && fileAnalysisResponse.DocumentType != null)
                 {
-                    invoiceAnalysisResult = invoiceAnalysisResponse;
-                    invoiceAnalysisResult.Success = true;
 
-                    ClearFile();
+                    if (fileAnalysisResponse.DocumentType == "Invoice")
+                    {
+                        if (fileAnalysisResponse.Data is not null)
+                        {
+                            var dataJsonString = fileAnalysisResponse.Data.ToString();
+                            invoiceAnalysisResult.Data = Newtonsoft.Json.JsonConvert.DeserializeObject<InvoiceData>(dataJsonString);
+                            invoiceAnalysisResult.Success = true;
+
+                            ClearFile();
+                        }
+                    }
+
+
+                    if (fileAnalysisResponse.DocumentType == "Information")
+                    {
+                        if (fileAnalysisResponse.Data is not null)
+                        {
+                            var dataJsonString = fileAnalysisResponse.Data.ToString();
+                            sentimentAnalysisResult.Data = Newtonsoft.Json.JsonConvert.DeserializeObject<SentimentData>(dataJsonString);
+                            sentimentAnalysisResult.Success = true;
+
+                            ClearFile();
+                        }
+                    }
+                }
+                else
+                {
+                    selectedFile = null;
+                    var errorResponse = await response.Content.ReadFromJsonAsync<FileErrorResult>();
+                    var errorMessage = errorResponse?.ErrorMessage ?? "Un error desconocido ocurrió al procesar el archivo.";
+                    errors.Add(errorMessage);
                 }
             }
-            else
-            {
-                selectedFile = null;
-                var errorResponse = await response.Content.ReadFromJsonAsync<FileErrorResult>();
-                var errorMessage = errorResponse?.ErrorMessage ?? "Un error desconocido ocurrió al procesar el archivo.";
-                errors.Add(errorMessage);
-            }
+
+            // if (response.IsSuccessStatusCode)
+            // {
+            //     var invoiceAnalysisResponse = await response.Content.ReadFromJsonAsync<InvoiceAnalysisResult>();
+
+            //     if (invoiceAnalysisResponse is not null && invoiceAnalysisResponse.DocumentType == DocumentType.Invoice)
+            //     {
+            //         invoiceAnalysisResult = invoiceAnalysisResponse;
+            //         invoiceAnalysisResult.Success = true;
+
+            //         ClearFile();
+            //     }
+            // }
+            // else
+            // {
+            //     selectedFile = null;
+            //     var errorResponse = await response.Content.ReadFromJsonAsync<FileErrorResult>();
+            //     var errorMessage = errorResponse?.ErrorMessage ?? "Un error desconocido ocurrió al procesar el archivo.";
+            //     errors.Add(errorMessage);
+            // }
         }
         catch (Exception ex)
         {
@@ -163,12 +223,12 @@ else
     {
         ClearFile();
         invoiceAnalysisResult = new();
+        sentimentAnalysisResult = new();
     }
 
-    private void OpenModal() => invoiceModalRef?.Open();
+    private void OpenInvoiceModal() => invoiceModalRef?.Open();
+    private void CancelInvoiceModal() => invoiceAnalysisResult = new();
 
-    private void CancelModal()
-    {
-        invoiceAnalysisResult = new();
-    }
+    private void OpenSentimentModal() => sentimentModalRef?.Open();
+    private void CancelSentimentModal() => sentimentAnalysisResult = new();
 }

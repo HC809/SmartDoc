@@ -60,11 +60,11 @@ public class FileController : ControllerBase
             {
                 case DocumentType.Invoice:
                     var invoiceData = await _invoiceAnalisisService.GetInvoiceAnalysisData(memoryStream);
-                    return Ok(new FileAnalysisResponse(DocumentType.Invoice, invoiceData));
+                    return Ok(new FileAnalysisResponse(DocumentType.Invoice.ToString(), invoiceData));
 
                 case DocumentType.Information:
                     var fileSentiment =  await _sentimentAnalysisService.GetSentimentAnalysisResponse(documentTypeResponse.Document!);
-                    return Ok(new FileAnalysisResponse(DocumentType.Invoice, fileSentiment));
+                    return Ok(new FileAnalysisResponse(DocumentType.Information.ToString(), fileSentiment));
 
                 default:
                     string message = "El documento seleccionado no es de tipo 'factura' ni 'información'. Por favor seleccione otro documento.";

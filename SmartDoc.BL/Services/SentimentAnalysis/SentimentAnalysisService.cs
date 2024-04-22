@@ -1,6 +1,5 @@
 ﻿using Azure;
 using Azure.AI.TextAnalytics;
-using DocumentFormat.OpenXml.Spreadsheet;
 
 namespace SmartDoc.BL.Services.SentimentAnalysis;
 internal sealed class SentimentAnalysisService : ISentimentAnalysisService
@@ -21,7 +20,7 @@ internal sealed class SentimentAnalysisService : ISentimentAnalysisService
             {
                 ModelVersion = "latest",
                 DisableServiceLogs = true,
-                SentenceCount = 5
+                SentenceCount = 3
             };
 
             TextAnalyticsActions actions = new TextAnalyticsActions()

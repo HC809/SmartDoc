@@ -1,0 +1,71 @@
+﻿@using SmartDoc.WebApp.Models
+
+<div class="modal @(ModalClass)" tabindex="-1" role="dialog" style="display:@(ModalDisplay)">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="invoiceModalLabel">Resumen y Sentimiento</h5>
+                <button type="button" @onclick="Close" class="close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h5><strong>Resumen:</strong></h5>
+                <p>@SentimentAnalysisResult?.Data?.Resume</p>
+                <h5><strong>Sentimiento:</strong></h5>
+                <h4>
+                    @GetSentimentEmoji(SentimentAnalysisResult?.Data?.Sentiment ?? "")
+                </h4>
+            </div>
+            <div class="modal-footer">
+                <button type="button" @onclick="Close" class="btn btn-secondary">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (ShowBackdrop)
+{
+    <div class="modal-backdrop fade show"></div>
+}
+
+@code {
+    [Parameter]
+    public SentimentAnalysisResult? SentimentAnalysisResult { get; set; }
+
+    public string ModalDisplay = "block;";
+    public string ModalClass = "";
+    public bool ShowBackdrop = true;
+
+    public void Open()
+    {
+        ModalDisplay = "block;";
+        ModalClass = "Show";
+        ShowBackdrop = true;
+        StateHasChanged();
+    }
+
+    public void Close()
+    {
+        ModalDisplay = "none";
+        ModalClass = "";
+        ShowBackdrop = false;
+        StateHasChanged();
+    }
+
+    private MarkupString GetSentimentEmoji(string sentiment)
+    {
+        var sentimentInfo = sentiment switch
+        {
+            "Positive" => ("<i class='bi bi-emoji-smile' style='color: green;'></i>", "Positivo"),
+            "Neutral" => ("<i class='bi bi-emoji-neutral' style='color: gray;'></i>", "Neutral"),
+            "Negative" => ("<i class='bi bi-emoji-frown' style='color: red;'></i>", "Negativo"),
+            _ => ("<i class='bi bi-emoji-expressionless'></i>", "Indefinido")
+        };
+
+        string emojiHtml = $"{sentimentInfo.Item1} <span class='ml-2'>{sentimentInfo.Item2}</span>";
+        return new MarkupString(emojiHtml);
+    }
+
+}
+

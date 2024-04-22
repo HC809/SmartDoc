@@ -9,9 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmartDoc.Api", "SmartDoc.Ap
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmartDoc.BL", "SmartDoc.BL\SmartDoc.BL.csproj", "{D83FC357-198E-46E2-AD22-8614EC41E90A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartDoc.Data", "SmartDoc.Data\SmartDoc.Data.csproj", "{D7EFD279-B7FC-4A7E-9E58-18C5C2C41DDD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmartDoc.Data", "SmartDoc.Data\SmartDoc.Data.csproj", "{D7EFD279-B7FC-4A7E-9E58-18C5C2C41DDD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartDoc.DataAccess", "SmartDoc.DataAccess\SmartDoc.DataAccess.csproj", "{98FCF651-1571-469D-A7C1-EE638BFC3DA1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmartDoc.DataAccess", "SmartDoc.DataAccess\SmartDoc.DataAccess.csproj", "{98FCF651-1571-469D-A7C1-EE638BFC3DA1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

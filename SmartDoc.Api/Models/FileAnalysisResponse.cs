@@ -1,6 +1,3 @@
-﻿using SmartDoc.BL.Services.DocumentClassifier;
-using SmartDoc.BL.Services.InvoiceAnalyze;
+﻿namespace SmartDoc.Api.Models;
 
-namespace SmartDoc.Api.Models;
-
-public sealed record FileAnalysisResponse(DocumentType DocumentType, dynamic Data);
+public sealed record FileAnalysisResponse(string DocumentType, dynamic Data);
