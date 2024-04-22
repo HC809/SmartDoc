@@ -180,26 +180,6 @@ else
                     errors.Add(errorMessage);
                 }
             }
-
-            // if (response.IsSuccessStatusCode)
-            // {
-            //     var invoiceAnalysisResponse = await response.Content.ReadFromJsonAsync<InvoiceAnalysisResult>();
-
-            //     if (invoiceAnalysisResponse is not null && invoiceAnalysisResponse.DocumentType == DocumentType.Invoice)
-            //     {
-            //         invoiceAnalysisResult = invoiceAnalysisResponse;
-            //         invoiceAnalysisResult.Success = true;
-
-            //         ClearFile();
-            //     }
-            // }
-            // else
-            // {
-            //     selectedFile = null;
-            //     var errorResponse = await response.Content.ReadFromJsonAsync<FileErrorResult>();
-            //     var errorMessage = errorResponse?.ErrorMessage ?? "Un error desconocido ocurrió al procesar el archivo.";
-            //     errors.Add(errorMessage);
-            // }
         }
         catch (Exception ex)
         {

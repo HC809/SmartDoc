@@ -1,17 +1,22 @@
 ﻿using Azure;
 using Azure.AI.FormRecognizer.DocumentAnalysis;
+using Microsoft.Extensions.Options;
 
 namespace SmartDoc.BL.Services.InvoiceAnalyze;
 
 internal sealed class InvoiceAnalysisService : IInvoiceAnalysisService
 {
-    private readonly string key = "b7265dd6172247ecb7b7af43a1fc2726";
-    private readonly string endpoint = "https://file-analyze-service.cognitiveservices.azure.com/";
+    private readonly DocumentAnalysisSettings _settings;
+
+    public InvoiceAnalysisService(IOptions<DocumentAnalysisSettings> options)
+    {
+        _settings = options.Value ?? throw new ArgumentNullException(nameof(options));
+    }
 
     public async Task<InvoiceData> GetInvoiceAnalysisData(Stream fileStream)
     {
-        AzureKeyCredential credential = new AzureKeyCredential(key);
-        DocumentAnalysisClient client = new DocumentAnalysisClient(new Uri(endpoint), credential);
+        AzureKeyCredential credential = new AzureKeyCredential(_settings.DocumentAnalysisApiKey);
+        DocumentAnalysisClient client = new DocumentAnalysisClient(new Uri(_settings.DocumentAnalysisEndpoint), credential);
 
         AnalyzeDocumentOperation operation = await client.AnalyzeDocumentAsync(WaitUntil.Completed, "prebuilt-invoice", fileStream);
         AnalyzeResult result = operation.Value;

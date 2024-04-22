@@ -4,8 +4,6 @@ using SmartDoc.BL.Services.FileNotificationLogFactory;
 using SmartDoc.BL.Services.InvoiceAnalyze;
 using SmartDoc.BL.Services.Log;
 using SmartDoc.BL.Services.SentimentAnalysis;
-using SmartDoc.Data.Entites.DocumentLogEntries;
-using SmartDoc.DataAccess.Repositories;
 
 namespace SmartDoc.BL;
 public static class DIContainer

@@ -1,16 +1,21 @@
 ﻿using Azure;
 using Azure.AI.TextAnalytics;
+using Microsoft.Extensions.Options;
 
 namespace SmartDoc.BL.Services.SentimentAnalysis;
 internal sealed class SentimentAnalysisService : ISentimentAnalysisService
 {
-    private readonly string languageKey = "ef44df28e69f4d429430ce7d3e55b3d6";
-    private readonly string languageEndpoint = "https://language-file-analyze-service2.cognitiveservices.azure.com/";
+    private readonly SentimentAnalysisSettings _settings;
+
+    public SentimentAnalysisService(IOptions<SentimentAnalysisSettings> options)
+    {
+        _settings = options.Value ?? throw new ArgumentNullException(nameof(options));
+    }
 
     public async Task<SentimentAnalysisResponse> GetSentimentAnalysisResponse(string document)
     {
-        AzureKeyCredential credential = new AzureKeyCredential(languageKey);
-        TextAnalyticsClient client = new TextAnalyticsClient(new Uri(languageEndpoint), credential);
+        AzureKeyCredential credential = new AzureKeyCredential(_settings.LanguageApiKey);
+        TextAnalyticsClient client = new TextAnalyticsClient(new Uri(_settings.LanguageEndpoint), credential);
 
         DocumentSentiment docSentiment = await client.AnalyzeSentimentAsync(document);
 
