@@ -4,6 +4,7 @@ using SmartDoc.Api.Models;
 using SmartDoc.BL.Services.DocumentClassifier;
 using SmartDoc.BL.Services.InvoiceAnalyze;
 using SmartDoc.BL.Services.FileNotificationLogFactory;
+using SmartDoc.BL.Services.SentimentAnalysis;
 
 namespace SmartDoc.Api.Controllers;
 
@@ -14,17 +15,20 @@ public class FileController : ControllerBase
 {
     private readonly IDocumentClassifierService _documentClassifierService;
     private readonly IInvoiceAnalysisService _invoiceAnalisisService;
+    private readonly ISentimentAnalysisService _sentimentAnalysisService;
     private readonly IFileNotificationLogFactory _logFactory;
     private readonly IMediator _mediator;
 
     public FileController(
-        IDocumentClassifierService documentClassifierService, 
+        IDocumentClassifierService documentClassifierService,
         IInvoiceAnalysisService invoiceAnalisisService,
+        ISentimentAnalysisService sentimentAnalysisService,
         IFileNotificationLogFactory logFactory,
         IMediator mediator)
     {
         _documentClassifierService = documentClassifierService;
         _invoiceAnalisisService = invoiceAnalisisService;
+        _sentimentAnalysisService = sentimentAnalysisService;
         _logFactory = logFactory;
         _mediator = mediator;
     }
@@ -49,18 +53,18 @@ public class FileController : ControllerBase
             memoryStream.Seek(0, SeekOrigin.Begin); // Restablece el puntero al inicio después de copiar.
 
             using var classificationStream = new MemoryStream(memoryStream.ToArray());
-            var documentType = await _documentClassifierService.GetDocumentType(classificationStream);
+            var documentTypeResponse = await _documentClassifierService.GetDocumentType(classificationStream);
             memoryStream.Seek(0, SeekOrigin.Begin);
 
-            switch (documentType)
+            switch (documentTypeResponse.DocumentType)
             {
                 case DocumentType.Invoice:
-                    var invoiceData = await _invoiceAnalisisService.Analyze(memoryStream);
-                    return Ok(new InvoiceAnalysisResponse(DocumentType.Invoice, invoiceData));
+                    var invoiceData = await _invoiceAnalisisService.GetInvoiceAnalysisData(memoryStream);
+                    return Ok(new FileAnalysisResponse(DocumentType.Invoice, invoiceData));
 
                 case DocumentType.Information:
-                    var generalTextAnalisisResult = "El documento es de información.";
-                    return Ok(new { DocumentType.Invoice, generalTextAnalisisResult });
+                    var fileSentiment =  await _sentimentAnalysisService.GetSentimentAnalysisResponse(documentTypeResponse.Document!);
+                    return Ok(new FileAnalysisResponse(DocumentType.Invoice, fileSentiment));
 
                 default:
                     string message = "El documento seleccionado no es de tipo 'factura' ni 'información'. Por favor seleccione otro documento.";

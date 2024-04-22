@@ -1,7 +1,6 @@
 ﻿
 using Azure.AI.FormRecognizer.DocumentAnalysis;
 using Azure;
-using Azure.Core;
 
 namespace SmartDoc.BL.Services.DocumentClassifier;
 internal sealed class DocumentClassifierService : IDocumentClassifierService
@@ -9,7 +8,7 @@ internal sealed class DocumentClassifierService : IDocumentClassifierService
     private readonly string key = "b7265dd6172247ecb7b7af43a1fc2726";
     private readonly string endpoint = "https://file-analyze-service.cognitiveservices.azure.com/";
 
-    public async Task<DocumentType> GetDocumentType(Stream fileStream)
+    public async Task<DocumentClassifierResponse> GetDocumentType(Stream fileStream)
     {
         AzureKeyCredential credential = new AzureKeyCredential(key);
         DocumentAnalysisClient client = new DocumentAnalysisClient(new Uri(endpoint), credential);
@@ -17,7 +16,14 @@ internal sealed class DocumentClassifierService : IDocumentClassifierService
         AnalyzeDocumentOperation operation = await client.AnalyzeDocumentAsync(WaitUntil.Completed, "prebuilt-layout", fileStream);
         AnalyzeResult analyzeResult = operation.Value;
 
-        return IsInvoice(analyzeResult) ? DocumentType.Invoice : DocumentType.Other;
+        if (IsInvoice(analyzeResult))
+            return new DocumentClassifierResponse(DocumentType.Invoice);
+
+        string documentText = GetDocumentText(analyzeResult);
+        if (!string.IsNullOrEmpty(documentText))
+            return new DocumentClassifierResponse(DocumentType.Information, documentText);
+
+        return new DocumentClassifierResponse(DocumentType.Other);
     }
 
     private bool IsInvoice(AnalyzeResult analyzeResult)
@@ -31,4 +37,17 @@ internal sealed class DocumentClassifierService : IDocumentClassifierService
             analyzeResult.Content.Contains("Rechnungsbetrag", StringComparison.OrdinalIgnoreCase) ||
             analyzeResult.Content.Contains("Total", StringComparison.OrdinalIgnoreCase);
     }
+
+    private string GetDocumentText(AnalyzeResult analyzeResult)
+    {
+        var paragraphs = new List<string>();
+
+        foreach (var paragraph in analyzeResult.Paragraphs)
+        {
+            paragraphs.Add(paragraph.Content);
+        }
+
+        return string.Join(" ", paragraphs);
+    }
+
 }

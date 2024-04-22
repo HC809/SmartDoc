@@ -8,7 +8,7 @@ internal sealed class InvoiceAnalysisService : IInvoiceAnalysisService
     private readonly string key = "b7265dd6172247ecb7b7af43a1fc2726";
     private readonly string endpoint = "https://file-analyze-service.cognitiveservices.azure.com/";
 
-    public async Task<InvoiceData> Analyze(Stream fileStream)
+    public async Task<InvoiceData> GetInvoiceAnalysisData(Stream fileStream)
     {
         AzureKeyCredential credential = new AzureKeyCredential(key);
         DocumentAnalysisClient client = new DocumentAnalysisClient(new Uri(endpoint), credential);
